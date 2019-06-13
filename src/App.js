@@ -1,26 +1,59 @@
 import React from 'react';
-import logo from './logo.svg';
+import Submit from './Submit';
+import ToDo from './Todo';
+import Complete from './Complete';
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
 
-export default App;
+export default class App extends React.Component {
+  state = {
+    value: '',
+    toDo: [],
+    completed: [],
+  }
+
+  addTodo = (newTodo) => {
+    this.setState((currentState) => ({
+      toDo: [newTodo, ...currentState.toDo]
+    }))
+  }
+
+  handleClick = (selectedTodo, name) => {
+
+    let index = this.state.toDo.findIndex(e => e === selectedTodo);
+
+    this.setState((currentState) => ({
+      toDo: [...currentState.toDo.slice(0, index), ...currentState.toDo.slice(index + 1)]
+    }), () => {
+      if (name === 'done') {
+        this.setState((currentState) => ({
+          completed: [...currentState.completed, selectedTodo]
+        }))
+      }
+    })
+
+  }
+
+  render = () => {
+    return (
+      <div className='main-container'>
+        <div className='submit'>
+          <Submit addTodo={this.addTodo} />
+        </div>
+        <div className='flex'>
+          <div className='todo'>
+            To-Do list
+          <ToDo
+              list={this.state.toDo}
+              handleClick={this.handleClick}
+            />
+          </div>
+          <div className='complete'>
+            Completed List
+          <Complete list={this.state.completed} />
+          </div>
+        </div>
+      </div>
+    )
+  }
+} 
